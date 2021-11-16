@@ -65,7 +65,7 @@ class CnnDetector(AIDetector):
 
     def __init__(self, set, id, hash):
         from nets.cnn_recognition import CNNRecognition
-        model = '../models/fine_tuning.h5'
+        model = '../models/fine_tuning'
         face_recognition = CNNRecognition(img_width=224, img_height=224)
         face_recognition.recognition = tf.keras.models.load_model(model)
         super().__init__(set, id, hash, face_recognition)

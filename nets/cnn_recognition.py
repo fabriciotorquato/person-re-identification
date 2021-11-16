@@ -29,7 +29,7 @@ class Net:
             tf.keras.layers.Conv2D(32, 3, activation='relu'),  # 2
             tf.keras.layers.Dropout(0.2),  # 3
             tf.keras.layers.GlobalAveragePooling2D(),  # 4
-            tf.keras.layers.Dense(5, activation='softmax')  # 5
+            tf.keras.layers.Dense(3, activation='softmax')  # 5
         ])
         return model
 

@@ -214,13 +214,15 @@ def main():
 
     source = '{}/set_{}/video{}_{}.avi'.format(
         args["video"], args["set"], args["set"], args["id"])
-   
+
     if os.path.isfile(source):
+        con = getConnection()
+        createTable(con)
+
         detector_hub = get_detector(args["detector"])
         detecter = detector_hub(args["set"], args["id"], args["hash"])
 
-        con = getConnection()
-        createTable(con)
+
 
         if args["thread"] == "both":
             threadBoth(args["id"], source, detecter)
