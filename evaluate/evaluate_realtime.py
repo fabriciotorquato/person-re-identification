@@ -1,71 +1,22 @@
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
+
 import argparse
 from threading import Thread
 import cv2
 import time
-import os
-import json
 import sys
 import datetime
 
-from database import Tracker, createTable, getConnection, insert, select, update
-sys.path.append("../facenetLib")  # go to parent dir
-sys.path.append("..")  # go to parent dir
+
+
+sys.path.append("../facenetLib")  
+sys.path.append("..") 
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
-from contributed import face
-
-class DetectorFace(object):
-
-    def __init__(self, set, id, hash):
-        self.image = None
-        self.model = '../models/20180402-114759.pb'
-        self.save_point = '../models/one_shot_classifier.pkl'
-        self.color = (0, 255, 0)
-        self.text_color = (255, 0, 0)
-        self.rect_size = 2
-        self.threshold = .5
-        self.face_recognition = face.Recognition(self.model, self.save_point)
-        self.location = "space {}".format(id)
-        self.json_results = {"set": set, "tracks": {}}
-        self.hash = hash
-
-    def insert_predict(self, predict_name, msec):
-        con = getConnection()
-        createTable(con)
-        last_predict = select(con, self.hash, predict_name, self.location)
-        
-        if len(last_predict) > 0:
-            last_predict = last_predict[0]
-            last_predict = Tracker(*last_predict)
-        else:
-            last_predict = None
-        
-        if last_predict and msec - last_predict.end < 1000:
-            update(con, last_predict.tracker_id, msec)
-        else:
-            insert(con, self.hash, predict_name, self.location, msec, msec)
 
 
-    def predict(self, frame, timestamp):
-        faces = self.face_recognition.identify(frame)
-        if faces:
-            for img in faces:
-                face_bb = img.bounding_box.astype(int)
-                pt1 = (face_bb[0], face_bb[1])
-                pt2 = (face_bb[2], face_bb[3])
-                if img.name is not None and img.prediction > self.threshold:
-                    self.insert_predict(img.name, timestamp)
-                    cv2.rectangle(frame, pt1, pt2, self.color, self.rect_size)
-                    cv2.putText(frame,
-                                img.name,
-                                pt2,
-                                cv2.FONT_HERSHEY_SIMPLEX,
-                                1,
-                                self.text_color,
-                                thickness=2,
-                                lineType=2)
-
-        return frame
-
+from evaluate.database import createTable, getConnection
+from nets.ai_detector import get_detector
 
 class VideoGet:
     """
@@ -164,7 +115,7 @@ def noThreading(idx=0, source=0, detecter=None):
             break
 
         frame = detecter.predict(frame)
-        frame = putIterationsPerSec(frame, cps.countsPerSec())
+        #frame = putIterationsPerSec(frame, cps.countsPerSec())
         cv2.imshow("Video_{}".format(idx), frame)
         cps.increment()
 
@@ -185,7 +136,7 @@ def threadVideoGet(idx=0, source=0, detecter=None):
 
         frame = video_getter.frame
         frame = detecter.predict(frame)
-        frame = putIterationsPerSec(frame, cps.countsPerSec())
+        #frame = putIterationsPerSec(frame, cps.countsPerSec())
         cv2.imshow("Video", frame)
         cps.increment()
 
@@ -213,7 +164,7 @@ def threadVideoShow(idx=0, source=0, detecter=None):
         if time_elapsed > 1. / frame_rate:
             prev = time.time()
             frame = detecter.predict(frame, msec)
-            frame = putIterationsPerSec(frame, cps.countsPerSec())
+            #frame = putIterationsPerSec(frame, cps.countsPerSec())
             video_shower.frame = frame
             cps.increment()
 
@@ -238,7 +189,7 @@ def threadBoth(idx=0, source=0, detecter=None):
 
         frame = video_getter.frame
         frame = detecter.predict(frame)
-        frame = putIterationsPerSec(frame, cps.countsPerSec())
+        #frame = putIterationsPerSec(frame, cps.countsPerSec())
         video_shower.frame = frame
         cps.increment()
 
@@ -258,14 +209,16 @@ def main():
                          + " show (video show in its own thread), both"
                          + " (video read and video show in their own threads),"
                          + " none (default--no multithreading)")
+    ap.add_argument("--detector", "-d", default="facenet",   help="Detector mode: facenet or cnn")
     args = vars(ap.parse_args())
 
     source = '{}/set_{}/video{}_{}.avi'.format(
         args["video"], args["set"], args["set"], args["id"])
    
+    if os.path.isfile(source):
+        detector_hub = get_detector(args["detector"])
+        detecter = detector_hub(args["set"], args["id"], args["hash"])
 
-    if os.path.isfile(source):       
-        detecter = DetectorFace(args["set"], args["id"], args["hash"])
         con = getConnection()
         createTable(con)
 

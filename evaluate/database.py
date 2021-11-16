@@ -51,7 +51,6 @@ def select(con, hash, predict_name, location):
 
 
 def select_all(con, hash):
-    print(hash)
     cur = con.execute(
         "SELECT * FROM Tracker WHERE hash = ? ORDER BY predict_name ", (hash,))
     return cur.fetchall()
