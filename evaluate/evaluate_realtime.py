@@ -161,12 +161,10 @@ def threadVideoShow(idx=0, source=0, detecter=None):
             break
         msec = int(cap.get(cv2.CAP_PROP_POS_MSEC))
         time_elapsed = time.time() - prev
-        if time_elapsed > 1. / frame_rate:
-            prev = time.time()
-            frame = detecter.predict(frame, msec)
-            #frame = putIterationsPerSec(frame, cps.countsPerSec())
-            video_shower.frame = frame
-            cps.increment()
+        frame = detecter.predict(frame, msec)
+        #frame = putIterationsPerSec(frame, cps.countsPerSec())
+        video_shower.frame = frame
+        cps.increment()
 
 
 def threadBoth(idx=0, source=0, detecter=None):

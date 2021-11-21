@@ -1,3 +1,5 @@
+apt-get install ffmpeg
+
 conda init bash
 
 conda create -n tcc-25 python=3.6 anaconda
