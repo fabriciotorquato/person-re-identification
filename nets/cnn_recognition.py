@@ -15,8 +15,9 @@ class PredictDetection:
 
 
 class Net:
-    def __init__(self, box=(224, 224, 3), trainable=False):
+    def __init__(self, output_class, box=(224, 224, 3), trainable=False):
         self.box = box
+        self.output_class = output_class
         self.model = self.get_model(trainable)
 
     def get_model(self, trainable=False):
@@ -25,27 +26,28 @@ class Net:
         self.base_model.trainable = trainable
 
         model = tf.keras.Sequential([
-            self.base_model,  # 1
-            tf.keras.layers.Conv2D(32, 3, activation='relu'),  # 2
-            tf.keras.layers.Dropout(0.2),  # 3
-            tf.keras.layers.GlobalAveragePooling2D(),  # 4
-            tf.keras.layers.Dense(3, activation='softmax')  # 5
+            self.base_model,
+            tf.keras.layers.Conv2D(32, 3, activation='relu'),
+            tf.keras.layers.Dropout(0.2),
+            tf.keras.layers.GlobalAveragePooling2D(),
+            tf.keras.layers.Dense(self.output_class, activation='softmax')
         ])
         return model
 
 
 class CNNRecognition:
-    def __init__(self, img_width, img_height):
+    def __init__(self, labels_class_file, img_width, img_height):
         from nets.detector_MTCNN import DetectorMTCNN
+        self.imagenet_labels = np.array(
+            open(labels_class_file).read().splitlines())
         self.detector = DetectorMTCNN(img_width, img_height)
-        self.recognition = Net((img_width, img_height, 3))
+        self.recognition = Net(output_class=len(
+            self.imagenet_labels), box=(img_width, img_height, 3))
         self.img_width = img_width
         self.img_height = img_height
-        labels_path = '../models/labels.txt'
-        self.imagenet_labels = np.array(open(labels_path).read().splitlines())
 
     def get_label(self, predictions):
-        predicted_class = np.argmax(predictions[0])        
+        predicted_class = np.argmax(predictions[0])
         predicted_class_name = self.imagenet_labels[predicted_class]
         return predicted_class_name
 
@@ -54,12 +56,13 @@ class CNNRecognition:
         if faces:
             predict_list = []
             for face_box in faces:
-                predict = PredictDetection()              
-                x, y, width, height = face_box           
-                predict.bounding_box = np.array([x, y, x+width, y+height])   
-                face_image = image[y:y+height, x:x+width, :]            
+                predict = PredictDetection()
+                x, y, width, height = face_box
+                predict.bounding_box = np.array([x, y, x+width, y+height])
+                face_image = image[y:y+height, x:x+width, :]
                 img_batch = np.expand_dims(face_image, axis=0)
-                img_batch = tf.image.resize(img_batch, (self.img_width, self.img_height), method=ResizeMethod.BILINEAR)
+                img_batch = tf.image.resize(
+                    img_batch, (self.img_width, self.img_height), method=ResizeMethod.BILINEAR)
                 img_preprocessed = preprocess_input(img_batch)
                 model_predict = self.recognition.predict(img_preprocessed)
                 predict.prediction = np.max(model_predict[0])
