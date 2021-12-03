@@ -1,0 +1,73 @@
+{
+   "set": 1,
+   "tracks": {
+      "ID1": [
+         {
+            "location": "space 1",
+            "start": "0:00:12",
+            "end": "0:00:15"
+         },
+         {
+            "location": "space 2",
+            "start": "0:00:10",
+            "end": "0:00:35"
+         }
+      ],
+      "ID2": [
+         {
+            "location": "space 2",
+            "start": "0:00:40",
+            "end": "0:00:52"
+         },
+         {
+            "location": "space 3",
+            "start": "0:00:30",
+            "end": "0:00:44"
+         }
+      ],
+      "ID16": [
+         {
+            "location": "space 1",
+            "start": "0:00:11",
+            "end": "0:00:13"
+         },
+         {
+            "location": "space 1",
+            "start": "0:00:53",
+            "end": "0:00:58"
+         },
+         {
+            "location": "space 5",
+            "start": "0:00:05",
+            "end": "0:00:08"
+         },
+         {
+            "location": "space 5",
+            "start": "0:00:50",
+            "end": "0:00:58"
+         }
+      ],
+      "UNK": [
+         {
+            "location": "space 1",
+            "start": "0:00:11",
+            "end": "0:00:13"
+         },
+         {
+            "location": "space 1",
+            "start": "0:00:53",
+            "end": "0:00:58"
+         },
+         {
+            "location": "space 5",
+            "start": "0:00:05",
+            "end": "0:00:08"
+         },
+         {
+            "location": "space 5",
+            "start": "0:00:50",
+            "end": "0:00:58"
+         }
+      ]
+   }
+}
