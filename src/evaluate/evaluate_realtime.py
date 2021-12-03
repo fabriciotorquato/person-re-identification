@@ -9,8 +9,8 @@ import datetime
 
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
-sys.path.append('../facenetLib')  
-sys.path.append('..') 
+sys.path.append('../../libs/facenet/src')
+sys.path.append('../../src')
 
 
 
@@ -202,7 +202,7 @@ def main():
                          + ' show (video show in its own thread), both'
                          + ' (video read and video show in their own threads),'
                          + ' none (default--no multithreading)')
-    ap.add_argument('--detector', '-d', default='facenet',   help='Detector mode: facenet or cnn')
+    ap.add_argument('--detector', '-d', default='facenet',   help='Detector mode: facenet or mobilenet')
     args = vars(ap.parse_args())
 
     source = '{}/set_{}/video{}_{}.avi'.format(

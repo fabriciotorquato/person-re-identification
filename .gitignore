@@ -1,8 +1,12 @@
 .idea
 .vscode
-data
+data/*
+output/*
 models
 *.pyc
 *.db
 *.json
+*.csv
+!test/expect/*.csv
+!test/*.json
 **/**/.DS_Store

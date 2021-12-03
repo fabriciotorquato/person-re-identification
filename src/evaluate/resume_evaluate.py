@@ -31,7 +31,7 @@ def main():
                     help='Path to video file (default /home).')
     ap.add_argument('--set', '-s', default=0,
                     help='Set to video file (default 0).')
-    ap.add_argument('--detector', '-d', default='facenet',   help='Detector mode: facenet or cnn')
+    ap.add_argument('--detector', '-d', default='facenet',   help='Detector mode: facenet or mobilenet')
     args = vars(ap.parse_args())
 
     output = '{}/../output/set_{}'.format(args['video'], args['set'])
