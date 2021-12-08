@@ -19,7 +19,7 @@ class TestMetricsMethods(unittest.TestCase):
             '-o', 'output']
         metrics(args)
 
-        with io.open('output/metrics.csv') as result:
+        with io.open('output/metrics_0_windows.csv') as result:
             with io.open('expect/expect_metrics_1.csv') as expect:
                 self.assertListEqual(list(result), list(expect))
 
@@ -31,7 +31,7 @@ class TestMetricsMethods(unittest.TestCase):
             '-o', 'output']
         metrics(args)
 
-        with io.open('output/metrics.csv') as result:
+        with io.open('output/metrics_0_windows.csv') as result:
             with io.open('expect/expect_metrics_2.csv') as expect:
                 self.assertListEqual(list(result), list(expect))
 
@@ -43,7 +43,7 @@ class TestMetricsMethods(unittest.TestCase):
             '-o', 'output']
         metrics(args)
 
-        with io.open('output/metrics.csv') as result:
+        with io.open('output/metrics_0_windows.csv') as result:
             with io.open('expect/expect_metrics_3.csv') as expect:
                 self.assertListEqual(list(result), list(expect))
 

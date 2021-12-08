@@ -3,7 +3,7 @@ import os
 import json
 import csv
 from itertools import groupby
-from datetime import datetime
+from datetime import datetime, timedelta
 import sys
 
 
@@ -47,15 +47,24 @@ class ConfusionMatrix:
         return fp, fn, tp
 
     def match_time(self, hits_tp, hits_gt):
+        print( hits_tp, hits_gt)
+        print(hits_gt['start'] <= hits_tp['start'] < hits_gt['end'])
         if hits_gt['start'] < hits_tp['end'] <= hits_gt['end'] and hits_tp['start'] < hits_gt['start']:
+            print("1")
             return get_diference_time(hits_tp['end'], hits_gt['start'])
         elif hits_gt['start'] > hits_tp['start'] < hits_gt['end'] and hits_tp['end'] > hits_gt['end']:
+            print("2")
             return get_diference_time(hits_gt['end'], hits_gt['start'])
         elif hits_gt['start'] <= hits_tp['start'] < hits_gt['end']:
+            print("3")
+            delta_time_match = 0
             if hits_gt['end'] <= hits_tp['end']:
-                return get_diference_time(hits_gt['end'], hits_tp['start'])
+                print("4")
+                delta_time_match+= get_diference_time(hits_gt['end'], hits_tp['start'])
             if hits_gt['end'] > hits_tp['end']:
-                return get_diference_time(hits_tp['end'], hits_tp['start'])
+                print("5")
+                delta_time_match+= get_diference_time(hits_tp['end'], hits_tp['start'])
+            return delta_time_match
         return 0
 
     def get_confusion_matrix(self, list_hits, locations_tp):
@@ -65,13 +74,16 @@ class ConfusionMatrix:
         time_expect = 0.0
 
         for hits_gt in sorted(list_hits, key=start_func):
-            time_expect += get_diference_time(
-                hits_gt['end'], hits_gt['start'])
+            time_expect += get_diference_time(hits_gt['end'], hits_gt['start'])
             for location_tp, predict_value in groupby(locations_tp, location_func):
                 if location_tp == self.location_gt:
                     for hits_tp in sorted(list(predict_value), key=start_func):
                         fp, fn, tp = self.calcule_confusion_matrix(
                             hits_tp, hits_gt, fp, fn, tp)
+                        if hits_gt not in  self.json_gt['tracks'][self.user]:
+                            break
+                if hits_gt not in  self.json_gt['tracks'][self.user]:
+                    break
         return fp, fn, tp, time_expect
 
     def row_with_match(self, list_hits, locations_tp):
@@ -95,6 +107,7 @@ class ConfusionMatrix:
         seconds_tp = 0
         seconds_gt = 0
         for user in self.json_gt['tracks'].keys():
+
             locations_gt = get_sorted_metrics(self.json_gt, user)
             for location_gt, value in groupby(locations_gt, location_func):
                 if location_gt:
@@ -102,21 +115,24 @@ class ConfusionMatrix:
                         seconds_gt += get_diference_time(
                             hits_gt['end'], hits_gt['start'])
                         for user in self.json_tp['tracks'].keys():
+                            print(user)
                             locations_tp = get_sorted_metrics(
                                 self.json_tp, user)
                             for location_tp, predict_value in groupby(locations_tp, location_func):
                                 if location_tp == location_gt:
                                     for hits_tp in sorted(list(predict_value), key=start_func):
+                                        print(hits_tp)
                                         seconds_tp += self.match_time(
                                             hits_tp, hits_gt)
+                                        print(seconds_tp)
         return seconds_tp, seconds_gt
+
+    def get_time_video(self, location):
+        return 60 if location == 'space 2' else 58
 
     def calcule_tn(self, results):
         for row in results[1:]:
-            if row[2] == 'space 2':
-                video_time = 60
-            else:
-                video_time = 58
+            video_time = self.get_time_video(row[2])
             row[9] = video_time - max(row[9], row[6]+row[8])
         return results
 
@@ -136,12 +152,29 @@ class ConfusionMatrix:
 
     def get_header(self):
         return['user', 'set', 'location',
-                        'accuracy detector', 'accuracy recognition',
-                        'f1', 'fp', 'fn', 'tp', 'tn',
-                        'precision', 'recall']
+               'accuracy detector', 'accuracy recognition',
+               'f1', 'fp', 'fn', 'tp', 'tn',
+               'precision', 'recall']
 
+    def apply_windows_range(self, windows_range):
+        zero_time = get_timestamp('00:00:00')
+        print("##")
+        for location_gt in self.json_gt['tracks'].values():
+            if location_gt:
+                for hits_gt in list(location_gt):
+                    start_time = get_timestamp(hits_gt['start'])-windows_range
+                    if start_time >= zero_time:
+                        hits_gt['start'] = get_strptime(start_time)
+                    video_time = self.get_time_video(hits_gt['location'])
+                    final_Video_time = get_timestamp(
+                        get_delta_time(video_time))
+                    end_time = get_timestamp(hits_gt['end'])+windows_range
+                    if end_time <= final_Video_time:
+                        hits_gt['end'] = get_strptime(end_time)
+                    print(hits_gt)
+        print("##")
 
-    def metrics(self, output):
+    def metrics(self, output, windows_range=0):
 
         set_gt = int(self.json_gt['set'])
         self.set_tp = int(self.json_tp['set'])
@@ -149,9 +182,10 @@ class ConfusionMatrix:
         if set_gt == self.set_tp:
             results = [self.get_header()]
 
-            # Calcule the accuracy of detector model
+            self.apply_windows_range(windows_range)
+
             seconds_tp, seconds_gt = self.calcule_acc_detector_model()
-            
+            print(seconds_tp, seconds_gt)
             self.remove_unknown()
 
             for user in self.json_tp['tracks'].keys():
@@ -271,6 +305,14 @@ def get_timestamp(time_hit):
     return datetime.timestamp(datetime.strptime(time_hit, '%H:%M:%S'))
 
 
+def get_strptime(time_hit):
+    return datetime.fromtimestamp(time_hit).strftime('%H:%M:%S')
+
+
+def get_delta_time(delta):
+    return str(timedelta(0, delta))
+
+
 def get_diference_time(t1, t2):
     return get_timestamp(t1)-get_timestamp(t2)
 
@@ -289,13 +331,16 @@ def main(argv):
                     help='Path to saved results file metrics.')
     argv = vars(ap.parse_args(argv))
 
-    output = '{}/metrics.csv'.format(argv['ouput'])
+    
 
     os.makedirs(argv['ouput'], exist_ok=True)
 
     print('Generating metrics file...')
-    ConfusionMatrix(argv['ground_truth'],
-                    argv['tracking_predict']).metrics(output)
+
+    for windows_range in [0, 3, 5]:
+        output = '{}/metrics_{}_windows.csv'.format(argv['ouput'],windows_range)
+        ConfusionMatrix(argv['ground_truth'], argv['tracking_predict']).metrics(
+            output, windows_range)
 
 
 if __name__ == '__main__':
