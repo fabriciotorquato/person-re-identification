@@ -16,6 +16,7 @@ class TestMetricsMethods(unittest.TestCase):
         args = [
             '-g', 'gt.json',
             '-p', 'tracking_predict_1.json',
+            '-v', '../data/ground_truth/video_time.json',
             '-o', 'output']
         metrics(args)
 
@@ -28,6 +29,7 @@ class TestMetricsMethods(unittest.TestCase):
         args = [
             '-g', 'gt.json',
             '-p', 'tracking_predict_2.json',
+            '-v', '../data/ground_truth/video_time.json',
             '-o', 'output']
         metrics(args)
 
@@ -40,6 +42,7 @@ class TestMetricsMethods(unittest.TestCase):
         args = [
             '-g', 'gt.json',
             '-p', 'tracking_predict_3.json',
+            '-v', '../data/ground_truth/video_time.json',
             '-o', 'output']
         metrics(args)
 

@@ -47,7 +47,6 @@ class AIDetector:
         faces = self.face_recognition.identify(frame)
         if faces:
             for img in faces:
-                print(img.name, img.prediction)
                 face_bb = img.bounding_box.astype(int)
                 pt1 = (face_bb[0], face_bb[1])
                 pt2 = (face_bb[2], face_bb[3])
@@ -70,7 +69,7 @@ class CnnDetector(AIDetector):
     def __init__(self, set, id, hash):
         from nets.cnn_recognition import CNNRecognition
         labels_class_file = '../../models/labels.txt'
-        face_recognition_path = '../../models/fine_tuning'
+        face_recognition_path = '../../models/mobilenet'
         face_recognition = CNNRecognition(labels_class_file=labels_class_file,img_width=224, img_height=224)
         face_recognition.recognition = tf.keras.models.load_model(face_recognition_path)
         super().__init__(set, id, hash, face_recognition)
@@ -79,8 +78,8 @@ class CnnDetector(AIDetector):
 class FacenetDetector(AIDetector):
 
     def __init__(self, set, id, hash):
-        model = '../../models/20180402-114759.pb'
-        save_point = '../../models/one_shot_classifier.pkl'
+        model = '../../models/facenet/20180402-114759.pb'
+        save_point = '../../models/facenet/one_shot_classifier.pkl'
         from contributed import face
         face_recognition = face.Recognition(model, save_point)
         super().__init__(set, id, hash, face_recognition)

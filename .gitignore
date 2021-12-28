@@ -1,6 +1,6 @@
 .idea
 .vscode
-data/*
+data/wisenet_dataset/*
 output/*
 models
 *.pyc
