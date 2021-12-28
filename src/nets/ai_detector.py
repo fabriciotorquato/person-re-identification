@@ -7,7 +7,7 @@ import tensorflow as tf
 import cv2
 import os
 
-from evaluate.database import Tracker, createTable, getConnection, insert, select, update
+from re_indentification.database import Tracker, createTable, getConnection, insert, select, update
 
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"

@@ -14,7 +14,7 @@ sys.path.append('../../src')
 
 
 
-from evaluate.database import createTable, getConnection
+from re_indentification.database import createTable, getConnection
 from nets.ai_detector import get_detector
 
 class VideoGet:
