@@ -4,13 +4,15 @@ con = None
 
 
 class Tracker:
-    def __init__(self, tracker_id, hash, predict_name, location, start, end):
+    def __init__(self, tracker_id, hash, predict_name, location, start, end, frame_start, frame_end):
         self.tracker_id = tracker_id
         self.hash = hash
         self.predict_name = predict_name
         self.location = location
         self.start = start
         self.end = end
+        self.frame_start = frame_start
+        self.frame_end = frame_end
 
 
 def getConnection():
@@ -24,22 +26,22 @@ def getConnection():
 def createTable(con):
     try:
         c = con.cursor()
-        c.execute("""CREATE TABLE IF NOT EXISTS Tracker (tracker_id INTEGER PRIMARY KEY AUTOINCREMENT,hash,predict_name,location, start, end)""")
+        c.execute("""CREATE TABLE IF NOT EXISTS Tracker (tracker_id INTEGER PRIMARY KEY AUTOINCREMENT, hash, predict_name,location, start, end, frame_start, frame_end)""")
     except Exception as e:
         pass
 
 
-def insert(con, hash, predict_name, location, start, end):
+def insert(con, hash, predict_name, location, start, end, frame_start, frame_end):
     c = con.cursor()
-    c.execute("""INSERT INTO Tracker (hash,predict_name,location, start, end) values(?, ?, ?,?,?)""", (
-        hash, predict_name, location, start, end))
+    c.execute("""INSERT INTO Tracker (hash, predict_name,location, start, end, frame_start, frame_end) values(?,?,?,?,?,?,?)""", (
+        hash, predict_name, location, start, end, frame_start, frame_end))
     con.commit()
 
 
-def update(con, tracker_id, end):
+def update(con, tracker_id, end, frame_end):
     c = con.cursor()
-    c.execute("UPDATE Tracker SET end = ? WHERE tracker_id = ? ",
-              (end, tracker_id))
+    c.execute("UPDATE Tracker SET end = ? WHERE tracker_id = ? ",(end, tracker_id))
+    c.execute("UPDATE Tracker SET frame_end = ? WHERE tracker_id = ? ",(frame_end, tracker_id))
     con.commit()
 
 

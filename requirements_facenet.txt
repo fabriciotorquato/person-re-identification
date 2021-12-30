@@ -10,4 +10,5 @@ requests
 psutil
 numpy==1.16.1
 pandas
+seaborn
 tqdm

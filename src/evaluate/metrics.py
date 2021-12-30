@@ -19,10 +19,10 @@ def main(argv):
 
     print('Generating metrics file...')
 
-    for windows_range in [0,3,5]:
-        output = '{}/metrics_{}_windows.csv'.format(argv['ouput'], windows_range)
-        ConfusionMatrix(argv['ground_truth'], argv['tracking_predict'], argv['video_time']).metrics(
-            output, windows_range)
+
+    output = '{}/metrics.csv'.format(argv['ouput'])
+    cm = ConfusionMatrix(argv['ground_truth'], argv['tracking_predict'], argv['video_time'])
+    cm.metrics(output)
 
 
 if __name__ == '__main__':

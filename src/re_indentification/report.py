@@ -4,7 +4,6 @@ import json
 import os
 from database import Tracker, getConnection, select_all
 from tqdm import tqdm
-from datetime import timedelta
 
 
 def get_strptime(time_hit):
@@ -13,10 +12,6 @@ def get_strptime(time_hit):
 
 def get_timestamp(time_hit):
     return datetime.datetime.timestamp(datetime.datetime.strptime(time_hit, '%H:%M:%S'))
-
-
-def get_delta_time(delta):
-    return str(timedelta(1000, delta))
 
 
 def search_end(list_values, current_location, current_begin):
@@ -49,13 +44,17 @@ def resume(set, results, output):
 
         if idx:
             json_results['tracks'][row_tracker.predict_name][idx]['end'] = end
+            json_results['tracks'][row_tracker.predict_name][idx]['frame_end'] = row_tracker.frame_end
         else:
-            json_results['tracks'][row_tracker.predict_name].append(
-                {'location': row_tracker.location, 'start': start, 'end': end})
+            json_results['tracks'][row_tracker.predict_name].append({'location': row_tracker.location,
+                                                                     'start': start, 
+                                                                     'end': end,
+                                                                     'frame_start': row_tracker.frame_start,
+                                                                     'frame_end':  row_tracker.frame_end})
 
     for user in json_results['tracks'].keys():
-        json_results['tracks'][user] = list(filter(
-            remove_same_time, json_results['tracks'][user]))
+        json_results['tracks'][user] = list(
+            filter(remove_same_time, json_results['tracks'][user]))
 
     with open(output, 'w') as f:
         json.dump(json_results, f)

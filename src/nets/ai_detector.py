@@ -27,7 +27,7 @@ class AIDetector:
         self.hash = hash
         self.img_width, self.img_height = 224, 224
 
-    def insert_predict(self, predict_name, msec):
+    def insert_predict(self, predict_name, msec, frame_count):
         con = getConnection()
         createTable(con)
         last_predict = select(con, self.hash, predict_name, self.location)
@@ -39,11 +39,11 @@ class AIDetector:
             last_predict = None
 
         if last_predict and msec - last_predict.end < 1000:
-            update(con, last_predict.tracker_id, msec)
+            update(con, last_predict.tracker_id, msec,frame_count)
         else:
-            insert(con, self.hash, predict_name, self.location, msec, msec)
+            insert(con, self.hash, predict_name, self.location, msec, msec,frame_count,frame_count)
 
-    def predict(self, frame, timestamp):
+    def predict(self, frame, timestamp,frame_count):
         faces = self.face_recognition.identify(frame)
         if faces:
             for img in faces:
@@ -51,7 +51,7 @@ class AIDetector:
                 pt1 = (face_bb[0], face_bb[1])
                 pt2 = (face_bb[2], face_bb[3])
                 if img.name is not None and img.prediction > self.threshold:
-                    self.insert_predict(img.name, timestamp)
+                    self.insert_predict(img.name, timestamp, frame_count)
                     cv2.rectangle(frame, pt1, pt2, self.color, self.rect_size)
                     cv2.putText(frame,
                                 img.name,
