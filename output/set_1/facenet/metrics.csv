@@ -1,0 +1,10 @@
+user,set,location,accuracy detection,accuracy recognition,f1,precision,recall
+ID15,1,space 2,0.3,0.0,0.0,0,0
+ID16,1,space 2,0.3,1.0,1.0,1.0,1.0
+ID16,1,space 3,0.3,1.0,1.0,1.0,1.0
+ID1,1,space 4,0.3,0.0,0.0,0,0
+ID15,1,space 4,0.3,0.0,0.0,0,0
+ID16,1,space 4,0.3,1.0,1.0,1.0,1.0
+ID1,1,space 5,0.3,0.0,0.0,0,0
+ID15,1,space 5,0.3,0.0,0.0,0,0
+ID16,1,space 5,0.3,0.27,0.43,1.0,0.27

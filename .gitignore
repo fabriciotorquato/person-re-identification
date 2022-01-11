@@ -1,12 +1,14 @@
 .idea
 .vscode
 data/wisenet_dataset/*
-output/*
 models
 *.pyc
 *.db
 *.json
 *.csv
+!data/ground_truth/*.json
+!data/output/*/*.json
+!output/*/*/*.csv
 !test/expect/*.csv
 !test/*.json
 **/**/.DS_Store

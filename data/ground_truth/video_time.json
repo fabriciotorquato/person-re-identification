@@ -1,0 +1,24 @@
+{
+  "fps": 30,
+  "1": {
+    "space 1": 58,
+    "space 2": 60,
+    "space 3": 58,
+    "space 4": 58,
+    "space 5": 58
+  },
+  "2": {
+    "space 1": 118,
+    "space 2": 118,
+    "space 3": 118,
+    "space 4": 118,
+    "space 5": 118
+  },
+  "10": {
+    "space 1": 40,
+    "space 2": 40,
+    "space 3": 40,
+    "space 4": 40,
+    "space 5": 40
+  }
+}
