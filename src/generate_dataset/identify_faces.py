@@ -1,3 +1,4 @@
+import argparse
 import sys
 sys.path.append('../../libs/facenet/src')
 sys.path.append('../../src')
@@ -10,12 +11,11 @@ from align.align_dataset_mtcnn import main
 from align.align_dataset_mtcnn import parse_arguments
 
 
-def process():
-    dataset = '../../data/wisenet_dataset/videos_frames'
+def process(dataset,video_path_base):
 
-    for idx in range(1,2):
-        video_path = '../../data/wisenet_dataset/video/set_{}'.format(idx)
-        subprocess.call(['sh','convert-videos.sh',video_path])
+    for idx in range(1,12):
+        video_path = '{}/set_{}'.format(video_path_base,idx)
+        subprocess.call(['sh','convert_videos.sh',video_path])
         os.makedirs(dataset, exist_ok=True)
         args = [video_path,
                 dataset,
@@ -27,4 +27,12 @@ def process():
 
 
 if __name__ == '__main__':
-    process()
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--dataset', '-d', default='/home',
+                    help='Path to saved dataset (default /home).')
+    ap.add_argument('--video_path', '-v', default='/home',
+                    help='Path to directory of video (default /home).')
+    args = vars(ap.parse_args())
+    dataset=args.dataset
+    video_path_base=args.video_path
+    process(dataset,video_path_base)
