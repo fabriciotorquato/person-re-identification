@@ -4,7 +4,7 @@
 
 ### Software
 
-* Python == 3.8 (conda)
+* Python == 3.6 (conda)
 * NVIDIA driver version: 460.x
 * NVIDIA CUDA version: 11.2
 * NVIDIA cuDNN version: 8.1.0
@@ -78,15 +78,27 @@ The person re-identification project is composed of two face recognition neural 
     |   |   |   └── set_4           # Set 4
 ```
 
-3. Run the script that will convert all videos into frames and save only those that have a face detected by MTCNN.
+3. Run the script that will convert all videos into frames and save only those that have a face detected by MTCNN. Or make download of images used in [paper](https://drive.google.com/drive/folders/16BtV7cKkdBbLAWo141uzwpMOWlUMCgfj).
 
    > $ cd scripts
 
    > $ get_faces.sh
 
+```
+    .
+    ├── data                      # Directory with the dataset
+    |   └── wisenet_dataset       # Dataset
+    |   |   └── videos_frames   
+    |   |   |   └── videio1_1     # Set 1 with camera 1       
+    |   |   |   └── videio1_2     # Set 1 with camera 2            
+    |   |   |   └── videio1_3     # Set 1 with camera 3            
+    |   |   |   └── videio1_4     # Set 1 with camera 4                 
+    |   |   |   └── videio1_5     # Set 1 with camera 5         
+```
+
    > Noted: Use the FaceNet environment
 
-4. In directory `data/wisenet_dataset/videos_frames`, the human faces resulting from the `get_faces.sh` script will be saved, make the separation of the faces by user, being that unknown user will be called `UNK`.
+4. In directory `data/wisenet_dataset/videos_frames`, the human faces resulting from the `get_faces.sh` script will be saved, make the separation of the faces by user, being that unknown user will be called `UNK`. Or make download of images used in [paper](https://drive.google.com/drive/folders/1HmN3QoAD9FszEGGEhOEbqgsU8rICs8fH)
 ```
     .
     ├── data                      # Directory with the dataset
@@ -99,7 +111,7 @@ The person re-identification project is composed of two face recognition neural 
 ```
    > Noted: Select only images from videos that will not be used in the experiment.
 
-5. Run notebook `notebooks/train/train_mobilenet.ipynb` for training mobileNet model, or download the models [pre-trained](https://drive.google.com/drive/folders/1u7buMV-dhHH-ux9znJRa5Z2QrWsQv3aY)
+5. Run notebook `notebooks/train/train_mobilenet.ipynb` for training mobileNet model, or download the models [pre-trained](https://drive.google.com/drive/folders/1u7buMV-dhHH-ux9znJRa5Z2QrWsQv3aY) e [labels](https://drive.google.com/drive/folders/1p2eCOhh2nvUBCUkJfs9DGww6a_57YO2d)
 ```
     .
     ├── models                      # Directory with the models

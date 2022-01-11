@@ -11,4 +11,4 @@ cd ../src/re_indentification && python indetification.py -x $hash -v ../../data/
 
 echo "Time to run model for evaluate videos camera: $SECONDS s"
 
-cd ../src/re_indentification && python report.py -x $hash -v ../../data/wisenet_dataset/video -s $set_video -d mobilenet
+python report.py -x $hash -v ../../data/wisenet_dataset/video -s $set_video -d mobilenet
